@@ -15,9 +15,8 @@ shutil.copyfile("tack.py", "tack/tack")
 
 setup(  name="tackpy",
         version="0.9.7",
-        author="Trevor Perrin",
-        author_email="tackpy@trevp.net",
-        url="https://github.com/trevp/TACKpy",
+        author="Trevor Perrin,Moxie Marlinspike",
+        url="http://tack.io",
         description="Tackpy implements TACK in python",
         license="public domain",
         scripts=["tack/tack"],
@@ -29,7 +28,7 @@ setup(  name="tackpy",
                                     "testdata/serverX509Cert.der"])]
         )
 
-print "Cleaning up..."
+print("Cleaning up...")
 if os.path.exists("build/"):
     shutil.rmtree("build/")
 
