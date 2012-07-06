@@ -171,8 +171,8 @@ class TlsCertificate:
 
     def __str__(self):
         s =\
-        """key_sha256     = %s
-notAfter       = %s
+        """key_sha256      = %s
+notAfter        = %s
 """ % (\
             Util.writeBytes(self.key_sha256),
             Time.posixTimeToStr(self.notAfter, True))

@@ -90,11 +90,11 @@ class Tack(TlsStructure):
 
         Used by the "TACK view" command to display TACK objects."""
         s =\
-        """fingerprint    = %s
-min_generation = %d
-generation     = %d
-expiration     = %s
-target_hash    = %s\n""" %\
+        """key fingerprint = %s
+min_generation  = %d
+generation      = %d
+expiration      = %s
+target_hash     = %s\n""" %\
         (self.getTackId(),
          self.min_generation,
          self.generation,

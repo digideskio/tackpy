@@ -16,7 +16,7 @@ class Util:
             retVal += s[:32]
             s = s[32:]
             if len(s):
-                retVal += "\n                 "
+                retVal += "\n                  "
         return retVal
 
     @staticmethod

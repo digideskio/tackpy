@@ -19,23 +19,23 @@ class TackExtension(TlsStructure):
         TlsStructure.__init__(self, data)
         self.tack           = self._parseTack()
         self.break_sigs     = self._parseBreakSigs()
-        self.pin_activation = self.getInt(1)
+        self.activation_flag = self.getInt(1)
 
-        if self.pin_activation not in TackActivation.ALL:
-            raise SyntaxError("Bad pin_activation value")
+        if self.activation_flag not in TackActivation.ALL:
+            raise SyntaxError("Bad activation_flag value")
 
         if self.index != len(data):
             raise SyntaxError("Excess bytes in TACK_Extension")
 
     @classmethod
-    def create(cls, tack, break_sigs, pin_activation):
+    def create(cls, tack, break_sigs, activation_flag):
         tackExtension                = cls()
         tackExtension.tack           = tack
         tackExtension.break_sigs     = break_sigs
-        if not pin_activation:
-            tackExtension.pin_activation = TackActivation.DISABLED
+        if not activation_flag:
+            tackExtension.activation_flag = TackActivation.DISABLED
         else:
-            tackExtension.pin_activation = TackActivation.ENABLED
+            tackExtension.activation_flag = TackActivation.ENABLED
 
         return tackExtension
 
@@ -55,7 +55,7 @@ class TackExtension(TlsStructure):
         else:
             w.add(0, 2)
 
-        w.add(self.pin_activation, 1)
+        w.add(self.activation_flag, 1)
 
         return w.getBytes()
 
@@ -114,6 +114,6 @@ class TackExtension(TlsStructure):
             for break_sig in self.break_sigs:
                 result += str(break_sig)
 
-        result += "pin_activation = %s\n" % TackActivation.STRINGS[self.pin_activation]
+        result += "activation_flag = %s\n" % TackActivation.STRINGS[self.activation_flag]
 
         return result
