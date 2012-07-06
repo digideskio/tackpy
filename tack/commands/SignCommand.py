@@ -94,7 +94,8 @@ class SignCommand(Command):
         expiration = self._getOptionValue("-e")
 
         if expiration is None and self._getNumArg() is None:
-            return int(math.ceil(certificate.notAfter / 60.0))
+            # Set expiration based on cert + 30 days (per spec's advice)
+            return int(math.ceil(certificate.notAfter / 60.0)) + (30*24*60)
         else:
             try:
                 return Time.parseTimeArg(expiration)
