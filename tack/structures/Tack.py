@@ -90,7 +90,7 @@ class Tack(TlsStructure):
 
         Used by the "TACK view" command to display TACK objects."""
         s =\
-        """TACK ID        = %s
+        """fingerprint    = %s
 min_generation = %d
 generation     = %d
 expiration     = %s

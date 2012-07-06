@@ -72,4 +72,4 @@ class TackBreakSig(TlsStructure):
     def __str__(self):
         """Return a readable string describing this TACK_Break_Sig.
         Used by the "TACK view" command to display TACK objects."""
-        return "Breaks TACK ID = %s\n" % self.getTackId()
+        return "Breaks fingerprint = %s\n" % self.getTackId()

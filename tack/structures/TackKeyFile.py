@@ -125,5 +125,5 @@ class TackKeyFile(TlsStructure):
         return encKey, authKey
 
     def __str__(self):
-        return """TACK ID        = %s\n""" % str(self.public_key)
+        return """fingerprint    = %s\n""" % str(self.public_key)
 
