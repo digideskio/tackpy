@@ -61,8 +61,8 @@ Deploy tacks to a hostname
 Removing tacks
 ===============
 
-Disabling the activation flag
-------------------------------
+Pin deactivation
+-----------------
 If you wish to stop using TACK for a hostname but can tolerate a "waiting
 period" before the tacks are removed, simply disable the activation flag at
 all servers for that hostname (Apache: "SSLTackActivationFlag Off"). Then wait
