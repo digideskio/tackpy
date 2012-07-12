@@ -8,11 +8,12 @@
 
 import sys
 from tack.commands.BreakCommand import BreakCommand
-from tack.commands.CertificateCommand import CertificateCommand
 from tack.commands.GenerateKeyCommand import GenerateKeyCommand
 from tack.commands.HelpCommand import HelpCommand
 from tack.commands.SignCommand import SignCommand
 from tack.commands.ViewCommand import ViewCommand
+from tack.commands.PackCommand import PackCommand
+from tack.commands.UnpackCommand import UnpackCommand
 from tack.crypto.openssl.OpenSSL import openssl
 
 openssl.initialize()
@@ -30,8 +31,9 @@ if __name__ == '__main__':
         ViewCommand(sys.argv[2:]).execute()
     elif sys.argv[1] == "help"[:len(sys.argv[1])]:
         HelpCommand(sys.argv[2:]).execute()
-    # Special hidden command:
-    elif sys.argv[1] == "cert"[:len(sys.argv[1])]:
-        CertificateCommand(sys.argv[2:]).execute()
+    elif sys.argv[1] == "pack"[:len(sys.argv[1])]:
+        PackCommand(sys.argv[2:]).execute()
+    elif sys.argv[1] == "unpack"[:len(sys.argv[1])]:
+        UnpackCommand(sys.argv[2:]).execute()
     else:
         HelpCommand.printGeneralUsage("Unknown command: %s" % sys.argv[1])

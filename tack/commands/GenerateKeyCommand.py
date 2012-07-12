@@ -22,10 +22,7 @@ class GenerateKeyCommand(Command):
         public_key, private_key = ECGenerator.generateECKeyPair()
         keyFile  = TackKeyFile.create(public_key, private_key, password)
         self.outputFile.write(self.addPemComments(keyFile.serializeAsPem()))
-
-        if self.isVerbose():
-            self.writeCryptoVersion()
-            sys.stderr.write(str(keyFile))
+        self.printVerbose(str(keyFile))
 
     def _getPasswordWithPrompt(self):
         if not self.password:

@@ -14,15 +14,12 @@ class BreakCommand(Command):
         Command.__init__(self, argv, "pok", "vx")
         self.password                        = self.getPassword()
         self.outputFile, self.outputFileName = self.getOutputFile()
-        self.keyfile                         = self.getKeyFile(self.getPassword())
+        self.keyfile                         = self.getKeyFile(self.getPassword(), mandatory=True)
 
     def execute(self):
         breakSig = TackBreakSig.create(self.keyfile.getPublicKey(), self.keyfile.getPrivateKey())
         self.outputFile.write(self.addPemComments(breakSig.serializeAsPem()))
-
-        if self.isVerbose():
-            self.writeCryptoVersion()
-            sys.stderr.write(str(breakSig))
+        self.printVerbose(str(breakSig))
 
     @staticmethod
     def printHelp():

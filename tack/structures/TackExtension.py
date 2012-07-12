@@ -9,6 +9,8 @@ from tack.structures.TackActivation import TackActivation
 from tack.structures.TackBreakSig import TackBreakSig
 from tack.tls.TlsStructure import TlsStructure
 from tack.tls.TlsStructureWriter import TlsStructureWriter
+from tack.util.PEMDecoder import PEMDecoder
+from tack.util.PEMEncoder import PEMEncoder
 
 class TackExtension(TlsStructure):
 
@@ -26,6 +28,10 @@ class TackExtension(TlsStructure):
 
         if self.index != len(data):
             raise SyntaxError("Excess bytes in TACK_Extension")
+
+    @classmethod
+    def createFromPem(cls, data):
+        return cls(PEMDecoder(data).decode("TACK EXTENSION"))
 
     @classmethod
     def create(cls, tack, break_sigs, activation_flag):
@@ -58,6 +64,9 @@ class TackExtension(TlsStructure):
         w.add(self.activation_flag, 1)
 
         return w.getBytes()
+
+    def serializeAsPem(self):
+        return PEMEncoder(self.serialize()).encode("TACK EXTENSION")
 
     def isEmpty(self):
         return not self.tack and not self.break_sigs

@@ -10,18 +10,16 @@ import math
 from tack.compat import readStdinBinary
 from tack.commands.Command import Command
 from tack.structures.Tack import Tack
-from tack.tls.TlsCertificate import TlsCertificate
 from tack.util.Time import Time
 
 class SignCommand(Command):
 
     def __init__(self, argv):
         Command.__init__(self, argv, "kcopmgen", "vx")
-
         self.password                        = self.getPassword()
-        self.keyfile                         = self.getKeyFile(self.password)
+        self.keyfile                         = self.getKeyFile(self.password, mandatory=True)
 
-        self.certificate                     = self._getCertificate()
+        self.certificate                     = self.getCertificate(mandatory=True)
         self.generation                      = self._getGeneration()
         self.min_generation                  = self._getMinGeneration()
         self.expiration                      = self._getExpiration(self.certificate)
@@ -41,10 +39,7 @@ class SignCommand(Command):
                             self.certificate.key_sha256)
 
             self.outputFile.write(self.addPemComments(tack.serializeAsPem()))
-
-            if self.isVerbose():
-                self.writeCryptoVersion()                    
-                sys.stderr.write(str(tack))
+            self.printVerbose(str(tack))
         else:
             # We are signing multiple TACKs, since "-n" was specified
             (numTacks, interval) = self.numArg
@@ -65,30 +60,9 @@ class SignCommand(Command):
                 except IOError:
                     self.printError("Error opening output file: %s" % outputFileName)
 
-                if self.isVerbose():
-                    self.writeCryptoVersion()                    
-                    sys.stderr.write(str(tack))
+                self.expiration += interval                    
+                self.printVerbose(str(tack))
 
-                self.expiration += interval
-
-    def _getCertificate(self):
-        certificateFile = self._getOptionValue("-c")
-
-        if not certificateFile:
-            self.printError("-c missing (Certificate)")
-
-        try:
-            if certificateFile == "-":
-                # Read as binary
-                certificateBytes = readStdinBinary()
-            else:
-                certificateBytes = bytearray(open(certificateFile, "rb").read())
-                
-            return TlsCertificate.createFromBytes(certificateBytes)
-        except SyntaxError:
-            self.printError("Certificate malformed: %s" % certificateFile)
-        except IOError:
-            self.printError("Error opening certificate: %s" % certificateFile)
 
     def _getExpiration(self, certificate):
         expiration = self._getOptionValue("-e")
@@ -175,7 +149,7 @@ Optional arguments:
                        Or, specify a delta from current time:
                        ("5m", "30d", "1d12h5m", "0m", etc.) 
                        If not specified, the certificate's notAfter is used.
-  - n NUM@INTERVAL   : Generate NUM TACKs, with expiration times spaced
+  -n NUM@INTERVAL    : Generate NUM TACKs, with expiration times spaced
                        out by INTERVAL (see -e for delta syntax).  The
                        -o argument is used as a filename prefix, and the
                        -e argument is used as the first expiration time.

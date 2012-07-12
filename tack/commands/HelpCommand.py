@@ -5,19 +5,20 @@
 # See the LICENSE file for legal information regarding use of this file.
 
 import sys
-from tack.commands.CertificateCommand import CertificateCommand
 from tack.version import __version__
-from tack.commands.BreakCommand import BreakCommand
 from tack.commands.Command import Command
 from tack.commands.GenerateKeyCommand import GenerateKeyCommand
 from tack.commands.SignCommand import SignCommand
+from tack.commands.BreakCommand import BreakCommand
 from tack.commands.ViewCommand import ViewCommand
+from tack.commands.PackCommand import PackCommand
+from tack.commands.UnpackCommand import UnpackCommand
 
 class HelpCommand(Command):
 
     COMMANDS = {"genkey" : GenerateKeyCommand, "sign" : SignCommand,
                 "break" : BreakCommand, "view" : ViewCommand,
-                "cert" : CertificateCommand}
+                "pack" : PackCommand, "unpack" : UnpackCommand}
 
     def __init__(self, argv):
         Command.__init__(self, argv, "", "", allowArgRemainder=True)
@@ -54,5 +55,6 @@ Commands (use "help <command>" to see optional args):
   break    -k KEY
   view     FILE
   help     COMMAND
+("pack" and "unpack" are advanced commands for debugging)
 """ % (__version__, Command.getCryptoVersion()))
         sys.exit(-1)

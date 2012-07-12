@@ -9,6 +9,10 @@ import getpass
 import sys
 import time
 from tack.structures.TackKeyFile import TackKeyFile
+from tack.structures.TackExtension import TackExtension
+from tack.structures.Tack import Tack
+from tack.structures.TackBreakSig import TackBreakSig
+from tack.tls.TlsCertificate import TlsCertificate
 from tack.util.Time import Time
 from tack.crypto.openssl.OpenSSL import openssl as o
 from tack.compat import bytesToStr, readStdinBinary
@@ -24,9 +28,16 @@ class Command:
             self.values, self.argRemainder = getopt.getopt(argv, self.options + self.flags)
             if not allowArgRemainder and self.argRemainder:
                 self.printError("Too many arguments: %s" % self.argRemainder)
+
+            # Handle flags
             if self._containsOption("-x"):
                 o.setInitError("requested from command line")
                 o.enabled = False
+            if self._containsOption("-v"):
+                self.verbose = True
+            else:
+                self.verbose = False
+
         except getopt.GetoptError as e:
             self.printError(e)
 
@@ -39,19 +50,19 @@ class Command:
         return cryptoVersion
 
     def writeCryptoVersion(self):
-        sys.stderr.write("Crypto         = %s\n" % Command.getCryptoVersion())
-
-    def isVerbose(self):
-        return self._containsOption("-v")
+        sys.stderr.write("Crypto          = %s\n" % Command.getCryptoVersion())       
 
     def getPassword(self):
         return self._getOptionValue("-p")
 
-    def getKeyFile(self, password):
+    def getKeyFile(self, password, mandatory):
         keyPemFile = self._getOptionValue("-k")
 
         if not keyPemFile:
-            self.printError("-k missing (TACK Key)")
+            if mandatory:
+                self.printError("-k missing (TACK Key)")
+            else:
+                return None
 
         if not password:
             password = self._promptPassword()
@@ -75,6 +86,65 @@ class Command:
         except IOError:
             self.printError("Error opening TACK Key File: %s" % keyPemFile)
 
+    def getBreakSignatures(self):
+        fileName = self._getOptionValue("-b")
+        if fileName is None:
+            return None
+        try:
+            contents = open(fileName, "r").read()
+            return TackBreakSig.createFromPemList(contents)
+        except IOError:
+            self.printError("Error opening break signatures: %s" % fileName)
+        except SyntaxError:
+            self.printError("Error parsing break signatures: %s" % fileName)
+
+    def getTack(self):
+        fileName = self._getOptionValue("-t")
+        if fileName is None:
+            return None
+        try:
+            contents = open(fileName, "r").read()
+            return Tack.createFromPem(contents)
+        except IOError:
+            self.printError("Error opening tack: %s" % fileName)
+        except SyntaxError:
+            self.printError("Error parsing tack: %s" % fileName)
+
+    def getTackExtension(self, mandatory):
+        fileName = self._getOptionValue("-E")
+        if fileName is None:
+            if mandatory:
+                self.printError("-E missing (TACK Extension)")
+            else:
+                return None
+        try:
+            contents = open(fileName, "r").read()
+            return TackExtension.createFromPem(contents)
+        except IOError:
+            self.printError("Error opening extension: %s" % fileName)
+        except SyntaxError:
+            self.printError("Error parsing extension: %s" % fileName)
+
+    def getCertificate(self, mandatory):
+        certificateFile = self._getOptionValue("-c")
+
+        if not certificateFile:
+            if mandatory:
+                self.printError("-c missing (Certificate)")
+            else:
+                return None
+        try:
+            if certificateFile == "-":
+                # Read as binary
+                certificateBytes = readStdinBinary()
+            else:
+                certificateBytes = bytearray(open(certificateFile, "rb").read())
+                
+            return TlsCertificate.createFromBytes(certificateBytes)
+        except SyntaxError:
+            self.printError("Certificate malformed: %s" % certificateFile)
+        except IOError:
+            self.printError("Error opening certificate: %s" % certificateFile)
 
     def getOutputFile(self):
         output = None
@@ -138,3 +208,7 @@ class Command:
         sys.stderr.write("ERROR: %s\n" % error)
         sys.exit(-1)
 
+    def printVerbose(self, s):
+        if self.verbose:
+            self.writeCryptoVersion()
+            sys.stderr.write(s)     

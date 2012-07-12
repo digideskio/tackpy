@@ -6,6 +6,7 @@
 
 import sys
 from tack.commands.Command import Command
+from tack.structures.TackExtension import TackExtension
 from tack.structures.Tack import Tack
 from tack.structures.TackKeyFile import TackKeyFile
 from tack.structures.TackBreakSig import TackBreakSig
@@ -16,7 +17,6 @@ class ViewCommand(Command):
 
     def __init__(self, argv):
         Command.__init__(self, argv, "", "x", allowArgRemainder=True)
-
         if len(self.argRemainder) < 1:
             self.printError("Missing argument: file to view")
         if len(self.argRemainder) > 1:
@@ -35,7 +35,7 @@ class ViewCommand(Command):
                     sys.stdout.write(str(kf))
                     return
                 elif decoder.containsEncoded("TACK"):
-                    fileType = "TACK"
+                    fileType = "Tack"
                     tack     = Tack.createFromPem(text)
                     sys.stdout.write(str(tack))
                     return
@@ -46,6 +46,11 @@ class ViewCommand(Command):
                     for tbs in tbsList:
                         s += str(tbs)
                     sys.stdout.write(s)
+                    return
+                elif decoder.containsEncoded("TACK EXTENSION"):
+                    fileType = "TACK Extension"
+                    tackExt = TackExtension.createFromPem(text)
+                    sys.stdout.write(str(tackExt))
                     return
                 elif decoder.containsEncoded( "CERTIFICATE"):
                     fileType = "Certificate"
