@@ -24,7 +24,7 @@ class PackCommand(Command):
                                                 self.activationFlag)
 
         #tlsCertificate = TlsCertificate.create(tackExtension)
-        self.outputFile.write(tackExtension.serializeAsPem())
+        self.outputFile.write(self.addPemComments(tackExtension.serializeAsPem()))
         self.printVerbose(str(tackExtension))
         
     def _getActivationFlag(self):
