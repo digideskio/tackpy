@@ -15,43 +15,42 @@ class PackCommand(Command):
     def __init__(self, argv):
         Command.__init__(self, argv, "otba", "vx")
         self.outputFile, self.outputFileName = self.getOutputFile()
-        self.tack = self.getTack()
+        self.tacks = self.getTacks()
         self.breakSignatures = self.getBreakSignatures()
-        self.activationFlag = self._getActivationFlag()
+        self.activationFlags = self._getActivationFlags()
 
     def execute(self):
-        tackExtension = TackExtension.create(self.tack, self.breakSignatures,
-                                                self.activationFlag)
+        tackExtension = TackExtension.create(self.tacks, self.breakSignatures,
+                                                self.activationFlags)
 
-        #tlsCertificate = TlsCertificate.create(tackExtension)
         self.outputFile.write(self.addPemComments(tackExtension.serializeAsPem()))
         self.printVerbose(str(tackExtension))
         
-    def _getActivationFlag(self):
-        activation_flag = self._getOptionValue("-a")
+    def _getActivationFlags(self):
+        activation_flags = self._getOptionValue("-a")
 
-        if activation_flag is None:
-            return 0
+        if activation_flags is None:
+            return TackActivation.NONE
 
         try:
-            activation_flag = int(activation_flag) # Could raise ValueError
-            if activation_flag < 0 or activation_flag > 1:
+            activation_flags = int(activation_flags) # Could raise ValueError
+            if activation_flags < 0 or activation_flags > TackActivation.BOTH_ACTIVE:
                 raise ValueError()
         except ValueError:
-            self.printError("Bad activation_flag: %s" % activation_flag)
+            self.printError("Bad activation_flags: %s" % activation_flags)
 
-        return activation_flag
+        return activation_flags
 
 
     @staticmethod
     def printHelp():
         print(
-"""Takes the input Tack, Break Sigs, and Activation Flag, and produces a 
+"""Takes the input Tacks, Break Sigs, and Activation Flag, and produces a 
 TACK_Extension from them.
 
 Optional arguments:
   -v                 : Verbose
-  -t TACK            : Include Tack from this file.
+  -t TACKS           : Include Tacks from this file.
   -b BREAKSIGS       : Include Break Signatures from this file.
   -a FLAG            : Activation flag (0 or 1)
   -o FILE            : Write the output to this file (instead of stdout)

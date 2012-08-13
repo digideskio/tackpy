@@ -18,8 +18,8 @@ class UnpackCommand(Command):
         self.tackExtension = self.getTackExtension(mandatory=True)
 
     def execute(self):
-        if self.tackExtension.tack:
-            self.outputFile.write(self.tackExtension.tack.serializeAsPem())
+        for tack in self.tackExtension.tacks:
+            self.outputFile.write(tack.serializeAsPem())
         for break_sig in self.tackExtension.break_sigs:
             self.outputFile.write(break_sig.serializeAsPem())
         self.printVerbose(str(self.tackExtension))
@@ -27,7 +27,7 @@ class UnpackCommand(Command):
     @staticmethod
     def printHelp():
         print(
-"""Takes the input TACK Extension, and writes out PEM encodings for its Tack 
+"""Takes the input TACK Extension, and writes out PEM encodings for its Tacks 
 and Break Signatures.
 
   unpack -e EXTENSION

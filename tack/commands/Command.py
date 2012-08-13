@@ -98,17 +98,17 @@ class Command:
         except SyntaxError:
             self.printError("Error parsing break signatures: %s" % fileName)
 
-    def getTack(self):
+    def getTacks(self):
         fileName = self._getOptionValue("-t")
         if fileName is None:
             return None
         try:
             contents = open(fileName, "r").read()
-            return Tack.createFromPem(contents)
+            return Tack.createFromPemList(contents)
         except IOError:
-            self.printError("Error opening tack: %s" % fileName)
+            self.printError("Error opening tacks: %s" % fileName)
         except SyntaxError:
-            self.printError("Error parsing tack: %s" % fileName)
+            self.printError("Error parsing tacks: %s" % fileName)
 
     def getTackExtension(self, mandatory):
         fileName = self._getOptionValue("-E")

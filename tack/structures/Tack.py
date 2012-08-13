@@ -42,6 +42,19 @@ class Tack(TlsStructure):
         return cls(PEMDecoder(pem).decode("TACK"))
 
     @classmethod
+    def createFromPemList(cls, data):
+        """Parse a string containing a sequence of PEM Tacks.
+
+        Raise a SyntaxError if input is malformed.
+        """
+        tacks = []
+        bList = PEMDecoder(data).decodeList("TACK")
+        for b in bList:
+            tacks.append(Tack(b))
+
+        return tacks
+
+    @classmethod
     def create(cls, public_key, private_key, min_generation, generation, expiration, target_hash):
         assert(len(public_key.getRawKey()) == 64)
         assert(0 <= min_generation <= 255)

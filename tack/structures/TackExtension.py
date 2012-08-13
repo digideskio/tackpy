@@ -19,11 +19,11 @@ class TackExtension(TlsStructure):
             return
 
         TlsStructure.__init__(self, data)
-        self.tack           = self._parseTack()
-        self.break_sigs     = self._parseBreakSigs()
-        self.activation_flag = self.getInt(1)
+        self.tacks            = self._parseTacks()
+        self.break_sigs       = self._parseBreakSigs()
+        self.activation_flags = self.getInt(1)
 
-        if self.activation_flag not in TackActivation.ALL:
+        if self.activation_flags not in TackActivation.ALL:
             raise SyntaxError("Bad activation_flag value")
 
         if self.index != len(data):
@@ -34,25 +34,23 @@ class TackExtension(TlsStructure):
         return cls(PEMDecoder(data).decode("TACK EXTENSION"))
 
     @classmethod
-    def create(cls, tack, break_sigs, activation_flag):
+    def create(cls, tacks, break_sigs, activation_flags):
         tackExtension                = cls()
-        tackExtension.tack           = tack
+        tackExtension.tacks          = tacks
         tackExtension.break_sigs     = break_sigs
-        if not activation_flag:
-            tackExtension.activation_flag = TackActivation.DISABLED
-        else:
-            tackExtension.activation_flag = TackActivation.ENABLED
+        tackExtension.activation_flags = activation_flags
 
         return tackExtension
 
     def serialize(self):
         w = TlsStructureWriter(self._getSerializedLength())
 
-        if self.tack:
-            w.add(Tack.LENGTH, 1)
-            w.add(self.tack.serialize(), Tack.LENGTH)
+        if self.tacks:
+            w.add(len(self.tacks) * Tack.LENGTH, 2)
+            for tack in self.tacks:
+                w.add(tack.serialize(), Tack.LENGTH)
         else:
-            w.add(0, 1)
+            w.add(0, 2)
 
         if self.break_sigs:
             w.add(len(self.break_sigs) * TackBreakSig.LENGTH, 2)
@@ -61,7 +59,7 @@ class TackExtension(TlsStructure):
         else:
             w.add(0, 2)
 
-        w.add(self.activation_flag, 1)
+        w.add(self.activation_flags, 1)
 
         return w.getBytes()
 
@@ -72,8 +70,8 @@ class TackExtension(TlsStructure):
         return not self.tack and not self.break_sigs
 
     def verifySignatures(self):
-        if self.tack:
-            if not self.tack.verifySignature():
+        for tack in self.tacks:
+            if not tack.verifySignature():
                 return False
         for break_sig in self.break_sigs:
             if not break_sig.verifySignature():
@@ -82,20 +80,29 @@ class TackExtension(TlsStructure):
 
     def _getSerializedLength(self):
         length = 0
-        if self.tack:
-            length += Tack.LENGTH
+        if self.tacks:
+            length += len(self.tacks) * Tack.LENGTH
 
         if self.break_sigs:
             length += len(self.break_sigs) * TackBreakSig.LENGTH
 
-        return length + 4
+        return length + 5 # 2x2 byes length fields, 1 byte flags
 
-    def _parseTack(self):
-        tackLen = self.getInt(1)
-        if tackLen:
-            if tackLen != Tack.LENGTH:
-                raise SyntaxError("TACK wrong size: %d" % tackLen)
-            return Tack(self.getBytes(tackLen))
+    def _parseTacks(self):
+        tacksLen = self.getInt(2)
+        if tacksLen:
+            if tacksLen > 2 * Tack.LENGTH:
+                raise SyntaxError("tacks too large: %d" % tacksLen)
+            elif tacksLen % Tack.LENGTH != 0:
+                raise SyntaxError("tacks wrong size: %d" % tacksLen)
+
+        tacks = []
+        b2 = self.getBytes(tacksLen)
+        while b2:
+            tacks.append(Tack(b2[:Tack.LENGTH]))
+            b2 = b2[Tack.LENGTH:]
+        
+        return tacks
 
     def _parseBreakSigs(self):
         sigsLen = self.getInt(2)
@@ -116,13 +123,14 @@ class TackExtension(TlsStructure):
     def __str__(self):
         result = ""
 
-        if self.tack:
-            result += str(self.tack)
+        if self.tacks:
+            for tack in self.tacks:
+                result += str(tack)
 
         if self.break_sigs:
             for break_sig in self.break_sigs:
                 result += str(break_sig)
 
-        result += "activation_flag = %s\n" % TackActivation.STRINGS[self.activation_flag]
+        result += "activation_flags = %s\n" % TackActivation.STRINGS[self.activation_flags]
 
         return result
