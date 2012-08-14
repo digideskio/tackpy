@@ -45,8 +45,9 @@ test:
 	$(EXEC) b -x -k $(TESTDIR)/TACK_Key2.pem -p asdf -o $(TESTDIR)/TACK_Break_Sig2.pem
 	cat $(TESTDIR)/TACK_Break_Sig1.pem $(TESTDIR)/TACK_Break_Sig2.pem > $(TESTDIR)/TACK_Break_Sigs.pem
 	$(EXEC) pack -t $(TESTDIR)/TACK3.pem > $(TESTDIR)/TACK_Ext3.pem
-	$(EXEC) pack -t $(TESTDIR)/TACK4.pem -b $(TESTDIR)/TACK_Break_Sigs.pem > $(TESTDIR)/TACK_Ext4.pem
-	$(EXEC) unpack -E $(TESTDIR)/TACK_Ext4.pem -o $(TESTDIR)/TACK_Ext4_Unpack.txt
+	cat $(TESTDIR)/TACK3.pem $(TESTDIR)/TACK4.pem > $(TESTDIR)/TACK3_4.pem
+	$(EXEC) pack -t $(TESTDIR)/TACK3_4.pem -b $(TESTDIR)/TACK_Break_Sigs.pem > $(TESTDIR)/TACK_Ext3_4.pem
+	$(EXEC) unpack -E $(TESTDIR)/TACK_Ext3_4.pem -o $(TESTDIR)/TACK_Ext3_4_Unpack.txt
 	$(EXEC) view $(TESTDIR)/TACK_Key1.pem > $(TESTDIR)/TACK_View_Key1.txt
 	cat $(TESTDIR)/TACK1.pem | $(EXEC) view - > $(TESTDIR)/TACK_View1.txt
 	$(EXEC) v $(TESTDIR)/TACK_Break_Sigs.pem > $(TESTDIR)/TACK_View_Break_Sigs.txt
