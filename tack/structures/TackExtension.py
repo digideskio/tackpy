@@ -5,7 +5,6 @@
 # See the LICENSE file for legal information regarding use of this file.
 
 from tack.structures.Tack import Tack
-from tack.structures.TackActivation import TackActivation
 from tack.structures.TackBreakSig import TackBreakSig
 from tack.tls.TlsStructure import TlsStructure
 from tack.tls.TlsStructureWriter import TlsStructureWriter
@@ -23,7 +22,7 @@ class TackExtension(TlsStructure):
         self.break_sigs       = self._parseBreakSigs()
         self.activation_flags = self.getInt(1)
 
-        if self.activation_flags not in TackActivation.ALL:
+        if self.activation_flags > 3:
             raise SyntaxError("Bad activation_flag value")
 
         if self.index != len(data):
@@ -67,7 +66,7 @@ class TackExtension(TlsStructure):
         return PEMEncoder(self.serialize()).encode("TACK EXTENSION")
 
     def isEmpty(self):
-        return not self.tack and not self.break_sigs
+        return not self.tacks and not self.break_sigs
 
     def verifySignatures(self):
         for tack in self.tacks:
@@ -131,6 +130,6 @@ class TackExtension(TlsStructure):
             for break_sig in self.break_sigs:
                 result += str(break_sig)
 
-        result += "activation_flags = %s\n" % TackActivation.STRINGS[self.activation_flags]
+        result += "activation_flags = %d\n" % self.activation_flags
 
         return result

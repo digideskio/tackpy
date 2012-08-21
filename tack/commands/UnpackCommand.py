@@ -6,7 +6,6 @@
 
 import sys
 from tack.commands.Command import Command
-from tack.structures.TackActivation import TackActivation
 from tack.structures.TackExtension import TackExtension
 from tack.tls.TlsCertificate import TlsCertificate
 

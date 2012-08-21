@@ -6,7 +6,6 @@
 
 import sys
 from tack.commands.Command import Command
-from tack.structures.TackActivation import TackActivation
 from tack.structures.TackExtension import TackExtension
 from tack.tls.TlsCertificate import TlsCertificate
 
@@ -30,11 +29,11 @@ class PackCommand(Command):
         activation_flags = self._getOptionValue("-a")
 
         if activation_flags is None:
-            return TackActivation.NONE
+            return 0
 
         try:
             activation_flags = int(activation_flags) # Could raise ValueError
-            if activation_flags < 0 or activation_flags > TackActivation.BOTH_ACTIVE:
+            if activation_flags < 0 or activation_flags > 3:
                 raise ValueError()
         except ValueError:
             self.printError("Bad activation_flags: %s" % activation_flags)
