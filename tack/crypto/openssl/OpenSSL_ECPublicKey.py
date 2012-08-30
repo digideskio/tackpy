@@ -57,7 +57,7 @@ class OpenSSL_ECPublicKey:
     def getFingerprint(self):
         digest = Digest.SHA256(self.rawPublicKey)
         assert(len(digest) == 32)
-        s = b2a_base32(digest).lower()[:25].replace('l', '8')
+        s = b2a_base32(digest).lower()[:25]
         return "%s.%s.%s.%s.%s" % (s[:5],s[5:10],s[10:15],s[15:20],s[20:25])
 
     def _constructEcFromRawKey(self, rawPublicKey):
