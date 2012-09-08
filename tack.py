@@ -7,7 +7,6 @@
 # See the LICENSE file for legal information regarding use of this file.
 
 import sys
-from tack.commands.BreakCommand import BreakCommand
 from tack.commands.GenerateKeyCommand import GenerateKeyCommand
 from tack.commands.HelpCommand import HelpCommand
 from tack.commands.SignCommand import SignCommand
@@ -25,8 +24,6 @@ if __name__ == '__main__':
         GenerateKeyCommand(sys.argv[2:]).execute()
     elif sys.argv[1] == "sign"[:len(sys.argv[1])]:
         SignCommand(sys.argv[2:]).execute()
-    elif sys.argv[1] == "break"[:len(sys.argv[1])]:
-        BreakCommand(sys.argv[2:]).execute()
     elif sys.argv[1] == "view"[:len(sys.argv[1])]:
         ViewCommand(sys.argv[2:]).execute()
     elif sys.argv[1] == "help"[:len(sys.argv[1])]:

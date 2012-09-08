@@ -12,15 +12,13 @@ from tack.tls.TlsCertificate import TlsCertificate
 class PackCommand(Command):
 
     def __init__(self, argv):
-        Command.__init__(self, argv, "otba", "vx")
+        Command.__init__(self, argv, "ota", "vx")
         self.outputFile, self.outputFileName = self.getOutputFile()
         self.tacks = self.getTacks()
-        self.breakSignatures = self.getBreakSignatures()
         self.activationFlags = self._getActivationFlags()
 
     def execute(self):
-        tackExtension = TackExtension.create(self.tacks, self.breakSignatures,
-                                                self.activationFlags)
+        tackExtension = TackExtension.create(self.tacks, self.activationFlags)
 
         self.outputFile.write(self.addPemComments(tackExtension.serializeAsPem()))
         self.printVerbose(str(tackExtension))
@@ -44,13 +42,12 @@ class PackCommand(Command):
     @staticmethod
     def printHelp():
         print(
-"""Takes the input Tacks, Break Sigs, and Activation Flag, and produces a 
+"""Takes the input Tacks, and Activation Flags, and produces a 
 TACK_Extension from them.
 
 Optional arguments:
   -v                 : Verbose
   -t TACKS           : Include Tacks from this file.
-  -b BREAKSIGS       : Include Break Signatures from this file.
-  -a FLAG            : Activation flag (0 or 1)
+  -a FLAG            : Activation flag (0...3)
   -o FILE            : Write the output to this file (instead of stdout)
 """)

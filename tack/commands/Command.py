@@ -11,7 +11,6 @@ import time
 from tack.structures.TackKeyFile import TackKeyFile
 from tack.structures.TackExtension import TackExtension
 from tack.structures.Tack import Tack
-from tack.structures.TackBreakSig import TackBreakSig
 from tack.tls.TlsCertificate import TlsCertificate
 from tack.util.Time import Time
 from tack.crypto.openssl.OpenSSL import openssl as o
@@ -85,18 +84,6 @@ class Command:
 
         except IOError:
             self.printError("Error opening TACK Key File: %s" % keyPemFile)
-
-    def getBreakSignatures(self):
-        fileName = self._getOptionValue("-b")
-        if fileName is None:
-            return None
-        try:
-            contents = open(fileName, "r").read()
-            return TackBreakSig.createFromPemList(contents)
-        except IOError:
-            self.printError("Error opening break signatures: %s" % fileName)
-        except SyntaxError:
-            self.printError("Error parsing break signatures: %s" % fileName)
 
     def getTacks(self):
         fileName = self._getOptionValue("-t")

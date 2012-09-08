@@ -54,19 +54,15 @@ Deploy tacks to a hostname
        - Apache: Set "SSLTACKTackFile" to a tack file.
   2) Set the activation flag on each server.
        - Apache: Set "SSLTACKActivationFlags 1".
-  3) Test the site (if there are problems, see "Removing tacks").
+  3) Test the site (if there are problems, see "Pin deactivation").
   4) Whenever you change a server's certificate, you must replace its tack.
 
 
-Removing tacks
-===============
-
 Pin deactivation
------------------
-If you wish to stop using TACK for a hostname but can tolerate a "waiting
-period" before the tacks are removed, simply disable the activation flag at
-all servers for that hostname (Apache: "SSLTACKActivationFlags 0"). Then wait
-for all existing client pins to become inactive.
+=================
+If you wish to stop using TACK for a hostname, simply disable the activation
+flag at all servers for that hostname (Apache: "SSLTACKActivationFlags 0").
+Then wait for all existing client pins to become inactive.
 
 The waiting period required is equal to the length of time that the activation
 flag has been enabled for any servers at the hostname, or a maximum of 30
@@ -76,31 +72,6 @@ safely removed.
 (For example: If you start using a tack for "example.com", then decide to
 disable the activation flag after one day, you can remove the tack at the end
 of the second day.)
-
-Break signatures
------------------
-If you wish to abruptly stop publishing a tack for a hostname, or abruptly
-change the hostname's TACK key, or signal that a TACK key has been
-compromised, then you may publish a "break signature" from the TACK key as
-part of the TLS connection.
-
-This break signature must remain published at the hostname until all pins
-between the hostname and the old TACK key have become inactive (30 days at
-most; this is exactly the same as the "waiting period" described in the
-previous section).
-
-A break signature from a TACK key causes any client who encounters it to
-discard all pins involving the TACK key. Thus, once a break signature is
-published for a TACK key, all existing pins and tacks for the TACK key cease
-providing security.
-
-A server can have up to eight break signatures. However, keep in mind that
-break signatures add to TLS handshake overhead, so are best avoided.
-
-Create a break signature for a TACK key:
-  1) Run "tack break -k KEY.pem > TACK_Break_Sig.pem"
-  2) Add the break signature to your web server.
-       - Apache: Set "SSLTACKBreakSigFile" to a file with break signatures.
 
 
 Advanced uses
@@ -158,6 +129,14 @@ produces 365 tacks, one expiring at midnight (UTC) each day of 2013:
 
 TACK Key rollover
 ------------------
-You may "rollover" a hostname from one TACK key to another without an interruption in security by publishing two tacks simultaneously.  This allows clients to form pins based on the second tack prior to the first tack being removed.
+You may "rollover" a hostname from one TACK key to another without an
+interruption in security by publishing two tacks simultaneously. This allows
+clients to form pins based on the second tack prior to the first tack being
+removed.
 
-To perform a rollover, simply append the new tack to the SSLTACKTackFile, and set the SSLTACKActivationFlags to 3 (1 activates the first tack, 2 activates the second tack, and 3 activates both).  Allow at least 30 days, then deactivate the first tack by setting SSLTACKActivationFlags to 2.  Allow at least another 30 days, then delete the first tack and set SSLTACKActivationFlags to 1.  The rollover is now complete.
+To perform a rollover, simply append the new tack to the SSLTACKTackFile, and
+set the SSLTACKActivationFlags to 3 (1 activates the first tack, 2 activates
+the second tack, and 3 activates both). Allow at least 30 days, then
+deactivate the first tack by setting SSLTACKActivationFlags to 2. Allow at
+least another 30 days, then delete the first tack and set
+SSLTACKActivationFlags to 1. The rollover is now complete.

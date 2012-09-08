@@ -9,7 +9,6 @@ from tack.version import __version__
 from tack.commands.Command import Command
 from tack.commands.GenerateKeyCommand import GenerateKeyCommand
 from tack.commands.SignCommand import SignCommand
-from tack.commands.BreakCommand import BreakCommand
 from tack.commands.ViewCommand import ViewCommand
 from tack.commands.PackCommand import PackCommand
 from tack.commands.UnpackCommand import UnpackCommand
@@ -17,8 +16,7 @@ from tack.commands.UnpackCommand import UnpackCommand
 class HelpCommand(Command):
 
     COMMANDS = {"genkey" : GenerateKeyCommand, "sign" : SignCommand,
-                "break" : BreakCommand, "view" : ViewCommand,
-                "pack" : PackCommand, "unpack" : UnpackCommand}
+                "view" : ViewCommand, "pack" : PackCommand, "unpack" : UnpackCommand}
 
     def __init__(self, argv):
         Command.__init__(self, argv, "", "", allowArgRemainder=True)
@@ -52,7 +50,6 @@ help <command>
 Commands (use "help <command>" to see optional args):
   genkey
   sign     -k KEY -c CERT
-  break    -k KEY
   view     FILE
   help     COMMAND
 ("pack" and "unpack" are advanced commands for debugging)

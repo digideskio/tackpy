@@ -9,7 +9,6 @@ from tack.commands.Command import Command
 from tack.structures.TackExtension import TackExtension
 from tack.structures.Tack import Tack
 from tack.structures.TackKeyFile import TackKeyFile
-from tack.structures.TackBreakSig import TackBreakSig
 from tack.tls.TlsCertificate import TlsCertificate
 from tack.util.PEMDecoder import PEMDecoder
 
@@ -38,14 +37,6 @@ class ViewCommand(Command):
                     fileType = "Tack"
                     tack     = Tack.createFromPem(text)
                     sys.stdout.write(str(tack))
-                    return
-                elif decoder.containsEncoded("TACK BREAK SIG"):
-                    fileType = "Break Sig"
-                    tbsList  = TackBreakSig.createFromPemList(text)
-                    s        = ""
-                    for tbs in tbsList:
-                        s += str(tbs)
-                    sys.stdout.write(s)
                     return
                 elif decoder.containsEncoded("TACK EXTENSION"):
                     fileType = "TACK Extension"
