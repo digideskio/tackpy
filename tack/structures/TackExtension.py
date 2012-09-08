@@ -71,8 +71,8 @@ class TackExtension(TlsStructure):
     def _parseTacks(self):
         tacksLen = self.getInt(2)
         if tacksLen:
-            if tacksLen > 2 * Tack.LENGTH:
-                raise SyntaxError("tacks too large: %d" % tacksLen)
+            if tacksLen > 2 * Tack.LENGTH or tacksLen < Tack.LENGTH:
+                raise SyntaxError("tacks wrong number: %d" % tacksLen)
             elif tacksLen % Tack.LENGTH != 0:
                 raise SyntaxError("tacks wrong size: %d" % tacksLen)
 
