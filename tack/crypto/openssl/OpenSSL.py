@@ -89,7 +89,7 @@ class OpenSSL:
             self._add("BN_bin2bn", args=[c_void_p, c_int, c_void_p])
     
             self._add("EVP_CIPHER_CTX_new", ret=c_void_p)
-            self._add("EVP_CIPHER_CTX_init", args=[c_void_p])
+            self._add("EVP_CIPHER_CTX_init", args=[c_void_p], skipWrap=True)
             self._add("EVP_CIPHER_CTX_cleanup", args=[c_void_p])        
             self._add("EVP_CIPHER_CTX_free", args=[c_void_p], skipWrap=True)
             self._add("EVP_CIPHER_CTX_set_padding", args=[c_void_p, c_int])        
