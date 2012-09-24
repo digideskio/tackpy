@@ -38,7 +38,9 @@ class PEMDecoder:
         end = self.data.find(postfix, start+len(prefix))
         if end == -1:
             raise SyntaxError("Missing PEM postfix")
-        s = self.data[start+len("-----BEGIN %s-----" % name) : end]
+        if end < start:
+            raise SyntaxError("PEM postfix before prefix")
+        s = self.data[start+len(prefix) : end]
         retBytes = a2b_base64(s)
         return retBytes
 
