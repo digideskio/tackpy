@@ -8,7 +8,6 @@ import unittest
 from tack.compat import a2b_hex
 from tack.crypto.ECGenerator import ECGenerator
 from tack.structures.Tack import Tack
-from tack.structures.TackBreakSig import TackBreakSig
 from tack.structures.TackKeyFile import TackKeyFile
 from tack.util.Time import Time
 
@@ -38,43 +37,6 @@ PDUV0rzIIYjXP58T5pphGKRgLlK3Aw==
                                       "a4180b3084b9d7739a8be32fd93c3"
                                       "515d2bcc82188d73f9f13e69a6118"
                                       "a4602e52b703"))
-
-    def test_BreakSig(self):
-        s = """
------BEGIN TACK BREAK SIG-----
-TAmsAZIpzR+MYwQrsujLhesvpu3dRc5ROhfgySqUVkU1p1hdXo+PwQrmaQo9B9+o
-hecRrWElh3yThwgYQRgbS0HynTQCmrY48oJsQtarSMoxnRNYHaaYOXwu9+4ur8mX
-wjKhIA9fXWNxuP73ZoicU+qC4bZjMN+WKuy7k8bSQZY=
------END TACK BREAK SIG-----"""
-
-        tbs = TackBreakSig.createFromPem(s)
-        assert(tbs.getTackId() == "nkufh.czttd.5cmlw.7cxtv.k6srn")
-        assert(tbs.signature == a2b_hex("41f29d34029ab638f2826c42d6a"
-                                        "b48ca319d13581da698397c2ef7"
-                                        "ee2eafc997c232a1200f5f5d637"
-                                        "1b8fef766889c53ea82e1b66330"
-                                        "df962aecbb93c6d24196"))
-
-    def test_BreakSigList(self):
-        s = """
------BEGIN TACK BREAK SIG-----
-TAmsAZIpzR+MYwQrsujLhesvpu3dRc5ROhfgySqUVkU1p1hdXo+PwQrmaQo9B9+o
-hecRrWElh3yThwgYQRgbS0HynTQCmrY48oJsQtarSMoxnRNYHaaYOXwu9+4ur8mX
-wjKhIA9fXWNxuP73ZoicU+qC4bZjMN+WKuy7k8bSQZY=
------END TACK BREAK SIG-----
-Created by TACK.py 0.9.6
-Created at 2012-05-10T00:54:10Z
------BEGIN TACK BREAK SIG-----
-73nkbxCcvFnrCIlcgtZx4iPevqxUFd9RFUNU18xfqzTCU8hV0jwYerdCwt8+VbkQ
-OvHEbbRHmGAX8yseGrYX1dNuoFfSN1fCLY08u/0NU+x8fmJ6tEewegVAHguw67eR
-PgegVlKuDULIASht9fvs6xTfxcFJDUgNaenZfcqAgAI=
------END TACK BREAK SIG-----
-"""
-        tbsList = TackBreakSig.createFromPemList(s)
-        assert(tbsList[0].getTackId()  == "nkufh.czttd.5cmlw.7cxtv.k6srn")
-        assert(tbsList[1].getTackId()  == "6xwgu.ydz7m.7cki3.kizmd.pt2f2")
-        assert(len(tbsList) == 2)
-        return 1
 
     def test_KeyFile(self):
         s = """

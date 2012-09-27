@@ -14,7 +14,7 @@ import shutil
 shutil.copyfile("tack.py", "tack/tack")
 
 setup(  name="tackpy",
-        version="0.9.8",
+        version="0.9.9",
         author="Trevor Perrin,Moxie Marlinspike",
         url="http://tack.io",
         description="Tackpy implements TACK in python",
