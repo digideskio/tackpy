@@ -40,7 +40,7 @@ class ViewCommand(Command):
                     return
                 elif decoder.containsEncoded("TACK EXTENSION"):
                     fileType = "TACK Extension"
-                    tackExt = TackExtension.createFromPem(text)
+                    tackExt = TackExtension.createFromPem(text, True)
                     sys.stdout.write(str(tackExt))
                     return
                 elif decoder.containsEncoded( "CERTIFICATE"):

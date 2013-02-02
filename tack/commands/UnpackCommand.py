@@ -14,7 +14,7 @@ class UnpackCommand(Command):
     def __init__(self, argv):
         Command.__init__(self, argv, "oE", "vx")
         self.outputFile, self.outputFileName = self.getOutputFile()
-        self.tackExtension = self.getTackExtension(mandatory=True)
+        self.tackExtension = self.getTackExtension(mandatory=True, extenderFormat=True)
 
     def execute(self):
         for tack in self.tackExtension.tacks:

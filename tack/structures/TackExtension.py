@@ -12,11 +12,17 @@ from tack.util.PEMEncoder import PEMEncoder
 
 class TackExtension(TlsStructure):
 
-    def __init__(self, data=None):
+    def __init__(self, data=None, extenderFormat=False):
         if data is None:
             return
 
         TlsStructure.__init__(self, data)
+        if extenderFormat:
+            extensionType = self.getInt(2)
+            if extensionType != 62208:
+                raise SyntaxError("Bad TLS Extension type")
+            extensionLen = self.getInt(2)
+            
         self.tacks            = self._parseTacks()
         self.activation_flags = self.getInt(1)
 
@@ -25,10 +31,12 @@ class TackExtension(TlsStructure):
 
         if self.index != len(data):
             raise SyntaxError("Excess bytes in TACK_Extension")
+        if extenderFormat and self.index != 4 + extensionLen:
+            raise SyntaxError("Bad TLS Extension length: %d %d")
 
     @classmethod
-    def createFromPem(cls, data):
-        return cls(PEMDecoder(data).decode("TACK EXTENSION"))
+    def createFromPem(cls, data, extenderFormat=False):
+        return cls(PEMDecoder(data).decode("TACK EXTENSION"), extenderFormat)
 
     @classmethod
     def create(cls, tacks, activation_flags):
@@ -38,22 +46,20 @@ class TackExtension(TlsStructure):
 
         return tackExtension
 
-    def serialize(self):
-        w = TlsStructureWriter(self._getSerializedLength())
-
-        if self.tacks:
-            w.add(len(self.tacks) * Tack.LENGTH, 2)
-            for tack in self.tacks:
-                w.add(tack.serialize(), Tack.LENGTH)
-        else:
-            w.add(0, 2)
-
+    def serialize(self, extenderFormat=False):
+        assert(self.tacks)
+        w = TlsStructureWriter(self._getSerializedLength(extenderFormat))
+        if extenderFormat:
+            w.add(62208, 2)
+            w.add(len(self.tacks) * Tack.LENGTH + 3, 2)
+        w.add(len(self.tacks) * Tack.LENGTH, 2)
+        for tack in self.tacks:
+            w.add(tack.serialize(), Tack.LENGTH)
         w.add(self.activation_flags, 1)
-
         return w.getBytes()
 
-    def serializeAsPem(self):
-        return PEMEncoder(self.serialize()).encode("TACK EXTENSION")
+    def serializeAsPem(self, extenderFormat=False):
+        return PEMEncoder(self.serialize(extenderFormat)).encode("TACK EXTENSION")
 
     def verifySignatures(self):
         for tack in self.tacks:
@@ -61,20 +67,19 @@ class TackExtension(TlsStructure):
                 return False
         return True
 
-    def _getSerializedLength(self):
-        length = 0
-        if self.tacks:
-            length += len(self.tacks) * Tack.LENGTH
-
+    def _getSerializedLength(self, extenderFormat=False):
+        assert(self.tacks)
+        length = len(self.tacks) * Tack.LENGTH
+        if extenderFormat:
+            length += 4
         return length + 3 # 2 byes length field, 1 byte flags
 
     def _parseTacks(self):
         tacksLen = self.getInt(2)
-        if tacksLen:
-            if tacksLen > 2 * Tack.LENGTH or tacksLen < Tack.LENGTH:
-                raise SyntaxError("tacks wrong number: %d" % tacksLen)
-            elif tacksLen % Tack.LENGTH != 0:
-                raise SyntaxError("tacks wrong size: %d" % tacksLen)
+        if tacksLen > 2 * Tack.LENGTH or tacksLen < Tack.LENGTH or tacksLen == 0:
+            raise SyntaxError("tacks wrong number: %d" % tacksLen)
+        elif tacksLen % Tack.LENGTH != 0:
+            raise SyntaxError("tacks wrong size: %d" % tacksLen)
 
         tacks = []
         b2 = self.getBytes(tacksLen)
@@ -86,10 +91,9 @@ class TackExtension(TlsStructure):
 
     def __str__(self):
         result = ""
-
-        if self.tacks:
-            for tack in self.tacks:
-                result += str(tack)
+        assert(self.tacks)
+        for tack in self.tacks:
+            result += str(tack)
 
         result += "activation_flags = %d\n" % self.activation_flags
 

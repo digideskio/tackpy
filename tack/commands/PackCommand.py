@@ -20,7 +20,7 @@ class PackCommand(Command):
     def execute(self):
         tackExtension = TackExtension.create(self.tacks, self.activationFlags)
 
-        self.outputFile.write(self.addPemComments(tackExtension.serializeAsPem()))
+        self.outputFile.write(self.addPemComments(tackExtension.serializeAsPem(True)))
         self.printVerbose(str(tackExtension))
         
     def _getActivationFlags(self):

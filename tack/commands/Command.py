@@ -79,11 +79,11 @@ class Command:
                 except InvalidPasswordException as ipe:
                     sys.stderr.write("Password incorrect!\n")
                     password = self._promptPassword()
-                except SyntaxError:
-                    self.printError("Error processing TACK Key File")
+                except SyntaxError as e:
+                    self.printError("Error processing TACK Key File: %s\n%s" % (keyPemFile, e))
 
-        except IOError:
-            self.printError("Error opening TACK Key File: %s" % keyPemFile)
+        except IOError as e:
+            self.printError("Error opening TACK Key File: %s\n%s" % (keyPemFile, e))
 
     def getTacks(self):
         fileName = self._getOptionValue("-t")
@@ -92,12 +92,12 @@ class Command:
         try:
             contents = open(fileName, "r").read()
             return Tack.createFromPemList(contents)
-        except IOError:
-            self.printError("Error opening tacks: %s" % fileName)
-        except SyntaxError:
-            self.printError("Error parsing tacks: %s" % fileName)
+        except IOError as e:
+            self.printError("Error opening tacks: %s\n%s" % (fileName, e))
+        except SyntaxError as e:
+            self.printError("Error parsing tacks: %s\n%s" % (fileName, e))
 
-    def getTackExtension(self, mandatory):
+    def getTackExtension(self, mandatory, extenderFormat=False):
         fileName = self._getOptionValue("-E")
         if fileName is None:
             if mandatory:
@@ -106,11 +106,11 @@ class Command:
                 return None
         try:
             contents = open(fileName, "r").read()
-            return TackExtension.createFromPem(contents)
-        except IOError:
-            self.printError("Error opening extension: %s" % fileName)
-        except SyntaxError:
-            self.printError("Error parsing extension: %s" % fileName)
+            return TackExtension.createFromPem(contents, extenderFormat)
+        except IOError as e:
+            self.printError("Error opening extension: %s\n%s" % (fileName, e))
+        except SyntaxError as e:
+            self.printError("Error parsing extension: %s\n%s" % (fileName, e))
 
     def getCertificate(self, mandatory):
         certificateFile = self._getOptionValue("-c")
@@ -128,10 +128,10 @@ class Command:
                 certificateBytes = bytearray(open(certificateFile, "rb").read())
                 
             return TlsCertificate.createFromBytes(certificateBytes)
-        except SyntaxError:
-            self.printError("Certificate malformed: %s" % certificateFile)
-        except IOError:
-            self.printError("Error opening certificate: %s" % certificateFile)
+        except SyntaxError as e:
+            self.printError("Certificate malformed: %s\n%s" % (certificateFile, e))
+        except IOError as e:
+            self.printError("Error opening certificate: %s\n%s" % (certificateFile, e))
 
     def getOutputFile(self):
         output = None
