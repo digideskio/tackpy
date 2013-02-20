@@ -49,7 +49,6 @@ Extension containing them.
   
   TACKS              : Use this Tacks file (PEM format, "-" for stdin)
 
-
 Optional arguments:
   -v                 : Verbose
   -a FLAG            : Activation flag (0...3)

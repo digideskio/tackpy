@@ -25,11 +25,12 @@ class Command:
             self.flags                  = flags
             self.options                = ":".join(options) + ":"
             self.values, self.argRemainder = getopt.gnu_getopt(argv, self.options + self.flags)
-            if not allowArgRemainder and self.argRemainder:
-                self.printError("Too many arguments: %s" % self.argRemainder)
-            if allowArgRemainder != len(self.argRemainder):
-                self.printError("Wrong number of arguments: %d should be %d" % \
-                    (len(self.argRemainder), allowArgRemainder))
+            if not allowArgRemainder == -1:
+                if not allowArgRemainder and self.argRemainder:
+                    self.printError("Too many arguments: %s" % self.argRemainder)
+                if allowArgRemainder != len(self.argRemainder):
+                    self.printError("Wrong number of arguments: %d should be %d" % \
+                        (len(self.argRemainder), allowArgRemainder))
 
             # Handle flags
             if self._containsOption("-x"):

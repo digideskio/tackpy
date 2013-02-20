@@ -19,7 +19,7 @@ class HelpCommand(Command):
                 "view" : ViewCommand, "pack" : PackCommand, "unpack" : UnpackCommand}
 
     def __init__(self, argv):
-        Command.__init__(self, argv, "", "", allowArgRemainder=True)
+        Command.__init__(self, argv, "", "", allowArgRemainder=-1)
 
         if len(self.argRemainder) < 1 or len(self.argRemainder)>1:
             HelpCommand.printGeneralUsage()
