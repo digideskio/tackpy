@@ -12,9 +12,9 @@ from tack.tls.TlsCertificate import TlsCertificate
 class UnpackCommand(Command):
 
     def __init__(self, argv):
-        Command.__init__(self, argv, "oE", "vx")
+        Command.__init__(self, argv, "o", "vx", 1)
         self.outputFile, self.outputFileName = self.getOutputFile()
-        self.tackExtension = self.getTackExtension(mandatory=True, extenderFormat=True)
+        self.tackExtension = self.getTackExtension(extenderFormat=True)
 
     def execute(self):
         for tack in self.tackExtension.tacks:
@@ -24,9 +24,11 @@ class UnpackCommand(Command):
     @staticmethod
     def printHelp():
         print(
-"""Takes the input TACK Extension, and writes out PEM encodings for its Tacks.
+"""Takes the input TACK Extension, and writes out its tacks.
 
-  unpack -e EXTENSION
+  unpack EXTENSION
+  
+  EXTENSION          : Use this Extension file (PEM format, "-" for stdin)
 
 Optional arguments:
   -v                 : Verbose

@@ -41,10 +41,10 @@ test:
 	$(EXEC) sign -x $(TESTDIR)/TACK_Key1.pem -p asdf -e 2030-06-06Z $(CERT2) -o $(TESTDIR)/TACK5.pem
 	cat $(CERT1) | $(EXEC) sign $(TESTDIR)/TACK_Key1.pem -p asdf -g2 -m2 - -o $(TESTDIR)/TACK6.pem
 	cat $(CERT2) | $(EXEC) sign $(TESTDIR)/TACK_Key1.pem -p asdf -m250 -g251 - -o $(TESTDIR)/T6 -e 2013-01-02Z -n 3@1d
-	$(EXEC) pack -t $(TESTDIR)/TACK3.pem > $(TESTDIR)/TACK_Ext3.pem
+	$(EXEC) pack $(TESTDIR)/TACK3.pem > $(TESTDIR)/TACK_Ext3.pem
 	cat $(TESTDIR)/TACK3.pem $(TESTDIR)/TACK4.pem > $(TESTDIR)/TACK3_4.pem
-	$(EXEC) pack -t $(TESTDIR)/TACK3_4.pem > $(TESTDIR)/TACK_Ext3_4.pem
-	$(EXEC) unpack -E $(TESTDIR)/TACK_Ext3_4.pem -o $(TESTDIR)/TACK_Ext3_4_Unpack.txt
+	$(EXEC) pack $(TESTDIR)/TACK3_4.pem > $(TESTDIR)/TACK_Ext3_4.pem
+	$(EXEC) unpack $(TESTDIR)/TACK_Ext3_4.pem -o $(TESTDIR)/TACK_Ext3_4_Unpack.txt
 	$(EXEC) view $(TESTDIR)/TACK_Key1.pem > $(TESTDIR)/TACK_View_Key1.txt
 	cat $(TESTDIR)/TACK1.pem | $(EXEC) view - > $(TESTDIR)/TACK_View1.txt
 	$(EXEC) v $(CERT1) > $(TESTDIR)/TACK_View_Cert1.txt

@@ -12,7 +12,7 @@ from tack.tls.TlsCertificate import TlsCertificate
 class PackCommand(Command):
 
     def __init__(self, argv):
-        Command.__init__(self, argv, "ota", "vx")
+        Command.__init__(self, argv, "oa", "vx", 1)
         self.outputFile, self.outputFileName = self.getOutputFile()
         self.tacks = self.getTacks()
         self.activationFlags = self._getActivationFlags()
@@ -42,12 +42,16 @@ class PackCommand(Command):
     @staticmethod
     def printHelp():
         print(
-"""Takes the input Tacks, and Activation Flags, and produces a 
-TACK_Extension from them.
+"""Takes a file containing 1 or more TACK PEM files, and write out a TACK
+Extension containing them.
+
+  pack TACKS
+  
+  TACKS              : Use this Tacks file (PEM format, "-" for stdin)
+
 
 Optional arguments:
   -v                 : Verbose
-  -t TACKS           : Include Tacks from this file.
   -a FLAG            : Activation flag (0...3)
   -o FILE            : Write the output to this file (instead of stdout)
 """)

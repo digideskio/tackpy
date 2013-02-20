@@ -82,9 +82,7 @@ class Command:
             self.printError("Error opening TACK Key File: %s\n%s" % (keyPemFile, e))
 
     def getTacks(self):
-        fileName = self._getOptionValue("-t")
-        if fileName is None:
-            return None
+        fileName = self.argRemainder[0]
         try:
             contents = open(fileName, "r").read()
             return Tack.createFromPemList(contents)
@@ -93,13 +91,8 @@ class Command:
         except SyntaxError as e:
             self.printError("Error parsing tacks: %s\n%s" % (fileName, e))
 
-    def getTackExtension(self, mandatory, extenderFormat=False):
-        fileName = self._getOptionValue("-E")
-        if fileName is None:
-            if mandatory:
-                self.printError("-E missing (TACK Extension)")
-            else:
-                return None
+    def getTackExtension(self, extenderFormat=False):
+        fileName = self.argRemainder[0]
         try:
             contents = open(fileName, "r").read()
             return TackExtension.createFromPem(contents, extenderFormat)
