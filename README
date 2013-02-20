@@ -47,7 +47,7 @@ that signs the public key in the server's certificate. To create and deploy
 these tacks, do the following:
 
 Create a tack for a certificate's public key:
-  1) Run "tack sign -k KEY.pem -c CERT > TACK.pem".
+  1) Run "tack sign KEY.pem CERT > TACK.pem".
 
 Deploy tacks to a hostname 
   1) Deploy tacks to each server at the hostname.
@@ -118,7 +118,7 @@ You can generate a batch of tacks with the "-n NUM@INTERVAL" argument to
 expiration times. The "-o" argument is taken as a filename prefix, and the
 "-e" time is used as the first expiration time.  Example:
 
-tack sign -k KEY.pem -c CERT -n 365@1d -e 2013-01-02Z -o T1
+tack sign KEY.pem CERT -n 365@1d -e 2013-01-02Z -o T1
 
 produces 365 tacks, one expiring at midnight (UTC) each day of 2013:
   T1_0000.pem

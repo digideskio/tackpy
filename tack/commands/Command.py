@@ -20,13 +20,16 @@ from tack.InvalidPasswordException import InvalidPasswordException
 
 class Command:
 
-    def __init__(self, argv, options, flags, allowArgRemainder=False):
+    def __init__(self, argv, options, flags, allowArgRemainder=0):
         try:
             self.flags                  = flags
             self.options                = ":".join(options) + ":"
-            self.values, self.argRemainder = getopt.getopt(argv, self.options + self.flags)
+            self.values, self.argRemainder = getopt.gnu_getopt(argv, self.options + self.flags)
             if not allowArgRemainder and self.argRemainder:
                 self.printError("Too many arguments: %s" % self.argRemainder)
+            if allowArgRemainder != len(self.argRemainder):
+                self.printError("Wrong number of arguments: %d should be %d" % \
+                    (len(self.argRemainder), allowArgRemainder))
 
             # Handle flags
             if self._containsOption("-x"):
@@ -54,15 +57,8 @@ class Command:
     def getPassword(self):
         return self._getOptionValue("-p")
 
-    def getKeyFile(self, password, mandatory):
-        keyPemFile = self._getOptionValue("-k")
-
-        if not keyPemFile:
-            if mandatory:
-                self.printError("-k missing (TACK Key)")
-            else:
-                return None
-
+    def getKeyFile(self, password):
+        keyPemFile = self.argRemainder[0]
         if not password:
             password = self._promptPassword()
 
@@ -112,14 +108,8 @@ class Command:
         except SyntaxError as e:
             self.printError("Error parsing extension: %s\n%s" % (fileName, e))
 
-    def getCertificate(self, mandatory):
-        certificateFile = self._getOptionValue("-c")
-
-        if not certificateFile:
-            if mandatory:
-                self.printError("-c missing (Certificate)")
-            else:
-                return None
+    def getCertificate(self):
+        certificateFile = self.argRemainder[1]
         try:
             if certificateFile == "-":
                 # Read as binary

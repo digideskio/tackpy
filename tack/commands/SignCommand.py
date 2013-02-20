@@ -15,11 +15,11 @@ from tack.util.Time import Time
 class SignCommand(Command):
 
     def __init__(self, argv):
-        Command.__init__(self, argv, "kcopmgen", "vx")
+        Command.__init__(self, argv, "opmgen", "vx", 2)
         self.password                        = self.getPassword()
-        self.keyfile                         = self.getKeyFile(self.password, mandatory=True)
+        self.keyfile                         = self.getKeyFile(self.password)
 
-        self.certificate                     = self.getCertificate(mandatory=True)
+        self.certificate                     = self.getCertificate()
         self.generation                      = self._getGeneration()
         self.min_generation                  = self._getMinGeneration()
         self.expiration                      = self._getExpiration(self.certificate)
@@ -131,10 +131,10 @@ class SignCommand(Command):
         print(
 """Creates a TACK based on a target certificate.
 
-  sign -k KEY -c CERT
+  sign KEY CERT
 
-  -k KEY             : Use this TACK key file ("-" for stdin)
-  -c CERT            : Sign this certificate's public key ("-" for stdin)
+  KEY                : Use this TACK key file ("-" for stdin)
+  CERT               : Sign this certificate's public key ("-" for stdin)
 
 Optional arguments:
   -v                 : Verbose
