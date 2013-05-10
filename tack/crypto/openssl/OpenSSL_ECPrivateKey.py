@@ -29,7 +29,6 @@ class OpenSSL_ECPrivateKey:
 
     def sign(self, data):
         ecdsa_sig = None
-
         try:
             # Hash and apply ECDSA
             hashBuf = bytesToC(Digest.SHA256(data))

@@ -70,7 +70,6 @@ class Tack(TlsStructure):
         tack.expiration     = expiration
         tack.target_hash    = target_hash
         tack.signature      = private_key.sign(tack._getDataToSign())
-
         return tack
 
     def getTackId(self):

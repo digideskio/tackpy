@@ -62,7 +62,6 @@ class OpenSSL_ECPublicKey:
 
     def _constructEcFromRawKey(self, rawPublicKey):
         ec_key, ec_group, ec_point = None, None, None
-
         try:
             ec_key = o.EC_KEY_new_by_curve_name(o.OBJ_txt2nid(b"prime256v1"))
             ec_group = o.EC_GROUP_new_by_curve_name(o.OBJ_txt2nid(b"prime256v1"))
@@ -78,7 +77,7 @@ class OpenSSL_ECPublicKey:
                 o.EC_KEY_free(ec_key)
 
             if ec_group:
-                o.EC_KEY_free(ec_group)
+                o.EC_GROUP_free(ec_group)
 
             if ec_point:
                 o.EC_POINT_free(ec_point)
